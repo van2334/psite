@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../site.config';
+import { getPosts, getProjects, formatDate } from '../utils';
+
+const projects = (await getProjects()).filter((p) => p.data.featured).slice(0, 3);
+const posts = (await getPosts()).slice(0, 4);
+---
+<Base>
+  <section class="hero">
+    <h1>
+      {site.intro.work}
+      <span class="life">{site.intro.life}</span>
+    </h1>
+    <p class="hero-links">
+      <a href="/projects/">See my work</a>
+      <a href="/about/">More about me</a>
+      {site.resume && <a href={site.resume}>Résumé (PDF)</a>}
+    </p>
+  </section>
+
+  <section class="section" aria-labelledby="h-work">
+    <h2 id="h-work">Selected work</h2>
+    <div>
+      <ul class="work-list">
+        {projects.map((p) => (
+          <li>
+            <a href={`/projects/${p.id}/`}>{p.data.title}</a>
+            <p>{p.data.summary}</p>
+            <p class="meta">{p.data.role}, {p.data.year}</p>
+          </li>
+        ))}
+      </ul>
+      <a class="more" href="/projects/">All projects</a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-writing">
+    <h2 id="h-writing">Recent writing</h2>
+    <div>
+      <ul class="post-list">
+        {posts.map((p) => (
+          <li>
+            <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date)}</time>
+            <a href={`/blog/${p.id}/`}>{p.data.title}</a>
+          </li>
+        ))}
+      </ul>
+      <a class="more" href="/blog/">All writing</a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-now">
+    <h2 id="h-now">Right now</h2>
+    <ul class="now-list">
+      {site.now.map((n) => (
+        <li><span class="label">{n.label}</span><span>{n.text}</span></li>
+      ))}
+    </ul>
+  </section>
+</Base>

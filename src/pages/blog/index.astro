@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getPosts, formatDate } from '../../utils';
+const posts = await getPosts();
+---
+<Base title="Writing" description="Notes on work, cooking, running, and whatever I'm learning.">
+  <header class="page-head">
+    <h1>Writing</h1>
+    <p>Notes on work, cooking, running, and whatever I'm learning. Subscribe with <a href="/rss.xml">RSS</a>.</p>
+  </header>
+  <ul class="post-list" style="padding-bottom:3rem">
+    {posts.map((p) => (
+      <li>
+        <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date)}</time>
+        <a href={`/blog/${p.id}/`}>{p.data.title}</a>
+      </li>
+    ))}
+  </ul>
+</Base>

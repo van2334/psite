@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../site.config';
+---
+<Base title="About" description={`About ${site.name}`}>
+  <header class="page-head">
+    <h1>About me</h1>
+  </header>
+
+  <!-- 把下面几段换成你自己的故事。每个 <p> 是一段。 -->
+  <div class="prose">
+    <p>
+      I grew up taking things apart to see how they worked, and mostly failing to put them back
+      together. These days I do the same thing with data and software, with a better success rate.
+    </p>
+    <p>
+      I'm currently looking for roles where I can work close to the people using what I build.
+      I like small teams, clear problems, and shipping something useful every week.
+    </p>
+
+    <h2>Outside of work</h2>
+    <p>
+      I cook a lot, usually from a recipe I've misread. I'm training for my first half marathon,
+      and I keep a running list of every bakery I pass on long runs. I write here about both, and about
+      whatever I'm learning at the time.
+    </p>
+
+    <h2>Get in touch</h2>
+    <p>
+      The best way to reach me is email{site.email && <>: <a href={`mailto:${site.email}`}>{site.email}</a></>}.
+      {site.links.length > 0 && <> I'm also on {site.links.map((l, i) => (
+        <>{i > 0 && (i === site.links.length - 1 ? ' and ' : ', ')}<a href={l.href} rel="me">{l.label}</a></>
+      ))}.</>}
+      {site.resume && <> You can also download my <a href={site.resume}>résumé</a>.</>}
+    </p>
+  </div>
+</Base>

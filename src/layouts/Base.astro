@@ -1,0 +1,91 @@
+---
+import '../styles/global.css';
+import { site } from '../site.config';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title, description = site.description } = Astro.props;
+const fullTitle = title ? `${title} | ${site.name}` : site.name;
+const path = Astro.url.pathname;
+const nav = [
+  { href: '/projects/', label: 'Work' },
+  { href: '/blog/', label: 'Writing' },
+  { href: '/about/', label: 'About' },
+];
+const isCurrent = (href: string) => path.startsWith(href);
+const canonical = new URL(path, Astro.site);
+---
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={site.name} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap"
+    />
+    <script is:inline>
+      try {
+        const t = localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="wrap">
+      <header class="site-header">
+        <a class="site-name" href="/">{site.name}</a>
+        <nav class="site-nav" aria-label="Main">
+          {nav.map((n) => (
+            <a href={n.href} aria-current={isCurrent(n.href) ? 'page' : undefined}>{n.label}</a>
+          ))}
+          <button class="theme-toggle" type="button" aria-label="Switch light or dark theme">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <circle cx="12" cy="12" r="8.5" />
+              <path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" />
+            </svg>
+          </button>
+        </nav>
+      </header>
+
+      <main id="main">
+        <slot />
+      </main>
+
+      <footer class="site-footer">
+        <span>© {new Date().getFullYear()} {site.name}</span>
+        <nav aria-label="Elsewhere">
+          {site.email && <a href={`mailto:${site.email}`}>Email</a>}
+          {site.links.map((l) => <a href={l.href} rel="me">{l.label}</a>)}
+          <a href="/rss.xml">RSS</a>
+        </nav>
+      </footer>
+    </div>
+    <script is:inline>
+      document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+        const root = document.documentElement;
+        const current =
+          root.dataset.theme ||
+          (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const next = current === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try { localStorage.setItem('theme', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>
